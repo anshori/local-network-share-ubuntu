@@ -1,4 +1,4 @@
-# local-network-share-ubuntu
+# Local Network Share Ubuntu - Windows
 Share direktori/folder pada local network dari ubuntu ke windows menggunakan samba
 #
 
@@ -10,12 +10,12 @@ ___
 ## Share Public Folder    
 Ubah _folder permission_ supaya semua pengguna dapat _create, edit, delete file/folder_   
 `$ sudo -R 0777 /home/<YOURUSERNAME>/Public`   
-
+   
 ## Melalui samba config   
 **Open samba config**
 `$ sudo nano /etc/samba/smb.conf`   
 
-**Pastikan  tertulis**   
+**Pastikan workgroup berada pada default WORKGROUP**   
 `# Change this to the workgroup/NT-domain name your Samba server will part of`   
 `workgroup = WORKGROUP`   
 
@@ -29,9 +29,9 @@ Ubah _folder permission_ supaya semua pengguna dapat _create, edit, delete file/
 
 **Simpan perubahan samba config**   
 
-## Restart samba service   
+**Restart samba service**   
 `$ sudo systemctl restart smbd`   
-
+   
 ## Pada Ubuntu Desktop
 **Jika menggunakan Ubuntu Desktop bisa menggunakan cara ini**   
 1. Klik kanan folder yang akan di-_share_
@@ -57,29 +57,40 @@ ___
 `\\<IP_ADDRESS_UBUNTU>\Public`   
 Contoh:   
 `\\10.20.11.59\Public`   
-![Gambar3](image/pic3.png)
-
-
+![Gambar3](image/pic3.png)   
+   
+## Cek Windows Workgroup Domain
+1. Buka Windows Terminal/Command Prompt/Power Shell
+2. Ketikkan command   
+`net config workstation`   
+![Gambar4](image/pic4.png)   
+3. Atau dari **System Properties** melalui klik kanan **This PC > Properties > Advanced System Settings > Computer Name**  
+![Gambar5](image/pic5.png)   
+   
 ___   
 ## Membuat SecureShare folder dengan login user   
 **Membuat samba grup user**   
 `$ sudo addgroup smbgrp`   
+
+**Buat user di dalam grup samba**   
 `$ sudo usermod unsorry -aG smbgrp`   
 `$ sudo smbpasswd -a unsorry`   
 
-**Akan muncul untuk membuat password seperti ini**
+Akan muncul command untuk membuat password seperti ini   
 `[sudo] password for unsorry:`   
 `New SMB password:`   
 `Retype new SMB password:`   
 
+> di sini saya menggunakan user dengan nama *unsorry*   
+
 **Install libpam-winbind package**   
-which is used to sync system users and passwords with the samba user database   
+Digunakan untuk menyinkronkan pengguna dan kata sandi sistem dengan database pengguna samba    
 `$ sudo apt install libpam-winbind`   
 
-**Buat secure share folder***   
+**Buat secure share folder**   
 `$ mkdir /home/<YOURUSERNAME>/SecureShare`   
 
-**Set the appropriate permissions on the directory**   
+**Atur permission yang sesuai pada direktori/folder**   
 `$ sudo chmod -R 0770 /home/<YOURUSERNAME>/SecureShare`   
 `$ sudo chown -R root:smbgrp /home/<YOURUSERNAME>/SecureShare`   
 
@@ -101,7 +112,7 @@ which is used to sync system users and passwords with the samba user database
 `$ sudo systemctl restart smbd`   
 
 **Access folder from Windows**    
-1. Buka windows explorer   
+1. Buka **Windows Explorer**   
 2. Pada directory/address bar ketikkan   
 `\\<IP_ADDRESS_UBUNTU>\SecureShare`   
 Contoh:   
